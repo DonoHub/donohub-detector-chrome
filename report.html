@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <style>
+      table {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        /*width: 100%;*/
+      }
+
+      table td, table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      table tr:nth-child(even){background-color: #f2f2f2;}
+
+      table tr:hover {background-color: #ddd;}
+
+      table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+      }
+      div.center {
+        display:flex;justify-content:center;align-items:center;
+      }
+    </style>
+  </head>
+  <body>
+      <div class="center">
+        <h1>DonoHub linked profile browsing report</h1>
+      </div>
+      <div class="center">
+        <p>
+          Select report:
+          <select id="reportSelect">
+            <option value="profile" selected>By DonoHub profile</option>
+            <option value="url">By URL</option>
+            <option value="host">By Host</option>
+          </select>
+        </p>
+      </div>
+      <div class="center">
+        <table id="report-table">
+        </table>
+      </div>
+      <div class="center">
+        <p>
+          When you're finished, browsing data can be cleared from the
+          <a href="options.html">configuration page</a>.
+        </p>
+      </div>
+    <script type="module" src="report.js"></script>
+  </body>
+</html>

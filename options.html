@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <title>DonoHub Detector Options</title>
+    <style>
+      .hidden { display: none }
+    </style>
+  </head>
+  <body>
+    <h4>
+      Configuration
+    </h4>
+    <p>
+      Timer display:
+      <select id="timer_display">
+        <option value="none">None</option>
+        <option value="profile">Per DonoHub profile</option>
+        <option value="page">Per page (URL)</option>
+        <option value="host">Per host</option>
+      </select>
+    </p>
+    <p>
+      The duration timer tracks the time spent on each URL that links to a
+      DonoHub profile. You can display the time spent on the current URL, or
+      the aggregate time spent on the current page's DonoHub profile or host.
+    </p>
+    <p>
+      <button id="save">Save</button>
+    </p>
+    <div id="status">
+    </div>
+    <hr />
+    <h4>
+      Clear history
+    </h4>
+    <p>
+      This will empty all records of pages visited that link to DonoHub profiles.
+    </p>
+    <p>
+      Space used: <strong id="storageSpaceUsed"></strong>
+    </p>
+    <p>
+      <button id="clearHistory">Clear history</button>
+    </p>
+    <p id="clearHistoryYesWrapper" class="hidden" style="color:red">
+      Are you sure?
+      <button id="clearHistoryYes">Yes</button>
+    </p>
+    <p>
+      <span id="historyStatus"></span>
+    </p>
+  </body>
+  <script src="options.js"></script>
+</html>
