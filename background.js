@@ -2,7 +2,9 @@ import { formatDuration } from './util.js'
 
 const pageDatabase = {}
 const hostDatabase = {}
+const twitterDatabase = {}
 const cacheWellKnown = {}
+const cacheTwitterUsers = {}
 
 chrome.browserAction.setBadgeText({ 'text': '?'});
 chrome.browserAction.setBadgeBackgroundColor({ 'color': "#777" });
@@ -132,6 +134,53 @@ const profileLookupDomainWellKnown = (url) => {
       }
     })
   }
+}
+
+const lookupUsernameFromTwitter = (twitterUsername) => {
+  const cache = cacheTwitterUsers[twitterUsername]
+  // Twitter profile lookups are cached for 1 day
+  if (cache && (Date.now() - cache.t) < 86400000) {
+    console.debug(`Twitter cache hit: @${twitterUsername} status=${cache["status"]} (expires in ${(86400000 - (Date.now() - cache.t)) / 1000} seconds)`)
+    if (cache["status"] === "found") {
+      return cache["value"]
+    } else {
+      // other statuses are "pending" and "not_found"
+      return
+    }
+  } else {
+    cacheTwitterUsers[twitterUsername] = { status: "pending", t: Date.now() }
+  }
+
+  // TODO replace random function w/ network fetch()
+  new Promise(
+    (resolve, reject) => {
+      const rando = Math.floor(Math.random() * 100000) + 1
+      if (rando % 5 === 0) {
+        resolve(`user_${rando}`)
+      } else {
+        // not found
+        reject(Error("Random number not modulo 5"))
+      }
+    }
+  )
+  .then((profile) => {
+    // DonoHub-enabled Twitter profile :)
+    twitterDatabase[twitterUsername] = profile
+    cacheTwitterUsers[twitterUsername] = {
+      status: "found",
+      value: profile,
+      t: Date.now(),
+    }
+    return profile
+  })
+  .catch((e) => {
+    console.debug(`Marking Twitter profile @${twitterUsername} not_found because: `, e)
+    cacheTwitterUsers[twitterUsername] = {
+      status: "not_found",
+      t: Date.now(),
+    }
+    return null
+  })
 }
 
 const updateTab = (t, tab) => {
@@ -314,5 +363,7 @@ chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {
   if (request.call === "profileLookupCached") {
     const result = profileLookupCached(request.url)
     sendResponse(result)
+  } else if (request.call === "lookupUsernameFromTwitter") {
+    sendResponse(lookupUsernameFromTwitter(request.username))
   }
 })
