@@ -1,5 +1,10 @@
 import { formatDurationHHMMSS } from './util.js'
 
+const tap = (x, fn) => {
+  fn(x);
+  return x;
+}
+
 const emptyTable = () => {
   const el = document.getElementById("report-table")
   while (el.firstChild) {
@@ -13,13 +18,14 @@ const generateProfileReport = () => {
   // headers
   const thead = document.createElement("thead")
   table.appendChild(thead)
-  const tr = document.createElement("tr")
-  thead.appendChild(tr);
-  ["Profile", "Total time viewed (hh:mm:ss)"].forEach((x) => {
-    const el = document.createElement("th")
-    el.setAttribute("scope", "col")
-    el.innerText = x
-    tr.appendChild(el)
+  tap(document.createElement("tr"), (tr) => {
+    thead.appendChild(tr);
+    ["Profile", "Total time viewed (hh:mm:ss)"].forEach((x) => {
+      const el = document.createElement("th")
+      el.setAttribute("scope", "col")
+      el.innerText = x
+      tr.appendChild(el)
+    })
   })
   // rows
   const tbody = document.createElement("tbody")
@@ -54,13 +60,14 @@ const generateHostReport = () => {
   // headers
   const thead = document.createElement("thead")
   table.appendChild(thead)
-  const tr = document.createElement("tr")
-  thead.appendChild(tr);
-  ["Host", "Total time viewed (hh:mm:ss)"].forEach((x) => {
-    const el = document.createElement("th")
-    el.setAttribute("scope", "col")
-    el.innerText = x
-    tr.appendChild(el)
+  tap(document.createElement("tr"), (tr) => {
+    thead.appendChild(tr);
+    ["Host", "Profile", "Total time viewed (hh:mm:ss)"].forEach((x) => {
+      const el = document.createElement("th")
+      el.setAttribute("scope", "col")
+      el.innerText = x
+      tr.appendChild(el)
+    })
   })
   // rows
   const tbody = document.createElement("tbody")
@@ -72,19 +79,32 @@ const generateHostReport = () => {
       .sort((a,b) => b[1].d - a[1].d)
     rows.forEach((row) => {
       const key = row[0]
-      const tr2 = document.createElement("tr")
-      tbody.appendChild(tr2)
-      const td1 = document.createElement("td")
-      tr2.appendChild(td1)
-      td1.setAttribute("align", "right")
-      const td1A = document.createElement("a")
-      td1.appendChild(td1A)
-      td1A.setAttribute("href", key)
-      td1A.innerText = key
-      const duration = document.createElement("td")
-      duration.setAttribute("align", "right")
-      tr2.appendChild(duration)
-      duration.innerText = formatDurationHHMMSS(row[1].d * 1000)
+      const tr = document.createElement("tr")
+      tbody.appendChild(tr)
+      const td1 = tap(document.createElement("td"), (td) => {
+        td.setAttribute("align", "right")
+        const a = document.createElement("a")
+        td.appendChild(a)
+        a.setAttribute("href", key)
+        a.innerText = key
+      })
+      tr.appendChild(td1)
+      const td2 = tap(document.createElement("td"), (td) => {
+        td.setAttribute("align", "right")
+        let profile
+        if (profile = row[1].p) {
+          const a = document.createElement("a")
+          td.appendChild(a)
+          a.setAttribute("href", `https://donohub.com/${profile}`)
+          a.innerText = `@${profile}`
+        }
+      })
+      tr.appendChild(td2)
+      const td3 = tap(document.createElement("td"), (td) => {
+        td.setAttribute("align", "right")
+        td.innerText = formatDurationHHMMSS(row[1].d * 1000)
+      })
+      tr.appendChild(td3)
     })
   })
 }

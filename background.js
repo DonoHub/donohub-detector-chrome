@@ -271,6 +271,8 @@ const tick = () => {
             update[pageKey].d += 1
             if (update[hostKey]) {
               update[hostKey].d += 1
+              // overwrite profile in case it changed
+              update[hostKey].p = data.profile
               processedHosts[url.host] = update[hostKey].d
             }
             if (update[profileKey]) {
